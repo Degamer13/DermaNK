@@ -25,6 +25,8 @@ use App\Livewire\UsersManager;
 use App\Livewire\RolesManager;
 use App\Livewire\PermissionsManager;
 use App\Livewire\DatabaseRestorer;
+// OJO: Aquí importamos el Manager, que es el archivo real que tienes
+use App\Livewire\MedicamentosManager;
 
 
 // =============================================================================
@@ -38,7 +40,6 @@ Route::get('/', function () {
 Route::get('/home', function () {
     return redirect()->route('dashboard');
 })->name('home');
-
 
 // =============================================================================
 // 2. RUTAS PROTEGIDAS (SOLO USUARIOS LOGUEADOS)
@@ -68,7 +69,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Récipes e Impresión
     Route::get('/recipes', RecipesManager::class)->name('recipes.index');
     Route::get('/recipe/pdf/{recipe}', [RecipeController::class, 'pdf'])->name('recipe.pdf');
-
+// AQUÍ ESTABA EL ERROR: Ahora usamos MedicamentosManager::class
+// ... dentro del middleware auth ...
+Route::get('/medicamentos', MedicamentosManager::class)->name('medicamentos.index');
 
     // --- SEGURIDAD Y ADMINISTRACIÓN (Protegidos por Roles/Permisos) ---
 

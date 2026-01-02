@@ -45,6 +45,7 @@ class RoleSeeder extends Seeder
             'editar recipes',
             'eliminar recipes',
             'descargar recipes', // PDF
+            
 
             // --- GESTIÓN DE BACKUPS ---
             'crear respaldo',

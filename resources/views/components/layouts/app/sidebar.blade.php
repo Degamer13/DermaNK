@@ -33,11 +33,13 @@
                         </flux:navlist.item>
                     @endcan
 
-                    @can('ver pacientes') {{-- Usamos el mismo permiso para investigar --}}
+
                         <flux:navlist.item icon="magnifying-glass" :href="route('buscador')" :current="request()->routeIs('buscador')" wire:navigate>
                             {{ __('Investigación') }}
                         </flux:navlist.item>
-                    @endcan
+             <flux:navlist.item icon="beaker" :href="route('medicamentos.index')" :current="request()->routeIs('medicamentos.index')" wire:navigate>
+    {{ __('Medicamentos') }}
+</flux:navlist.item>
                 </flux:navlist.group>
 
                 {{-- 3. SECCIÓN ADMINISTRACIÓN (Solo Admins) --}}
