@@ -45,7 +45,11 @@ class RoleSeeder extends Seeder
             'editar recipes',
             'eliminar recipes',
             'descargar recipes', // PDF
-            
+            // --- GESTIÓN DE MEDICAMENTOS ---
+            'ver medicamentos',
+            'crear medicamentos',
+            'editar medicamentos',
+            'eliminar medicamentos',
 
             // --- GESTIÓN DE BACKUPS ---
             'crear respaldo',

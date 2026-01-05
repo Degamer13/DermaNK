@@ -4,156 +4,92 @@
     <meta charset="UTF-8">
     <title>Récipe - {{ $recipe->codigo }}</title>
     <style>
-        /* CONFIGURACIÓN DE PÁGINA */
+        /* 1. CONFIGURACIÓN DE PÁGINA (MEDIA CARTA) */
         @page {
-            margin: 1cm 1.5cm;
-            margin-bottom: 3cm; /* Espacio reservado para el footer fijo */
+            size: 14cm 21.6cm; /* Ancho x Alto */
+            margin: 1cm; /* Márgenes seguros */
+            margin-bottom: 2.5cm; /* Espacio para el footer */
         }
+
         body {
-            font-family: 'Helvetica', 'Arial', sans-serif;
-            font-size: 12px;
-            color: #333;
-            line-height: 1.4;
+            font-family: 'Arial', sans-serif;
+            font-size: 11px; /* Letra legible pero compacta */
+            color: #000;
+            line-height: 1.3;
         }
 
-        /* UTILIDAD DE SALTO DE PÁGINA */
-        .page-break {
-            page-break-after: always;
-        }
+        /* UTILIDADES */
+        .page-break { page-break-after: always; }
+        .text-right { text-align: right; }
+        .text-center { text-align: center; }
+        .bold { font-weight: bold; }
+        .uppercase { text-transform: uppercase; }
 
-        /* ENCABEZADO */
+        /* ENCABEZADO SIMPLE */
         .header-table {
             width: 100%;
-            border-bottom: 2px solid #0056b3;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
+            border-bottom: 2px solid #000; /* Línea negra simple */
+            padding-bottom: 5px;
+            margin-bottom: 15px;
         }
+        .doc-name { font-size: 14px; font-weight: bold; }
+        .doc-spec { font-size: 10px; }
+        .clinic-data { font-size: 9px; line-height: 1.2; }
 
-        .doctor-title {
-            font-size: 24px;
-            font-weight: bold;
-            color: #0056b3;
-            margin: 0;
-            text-transform: uppercase;
+        /* DATOS DEL PACIENTE (Estilo lineal limpio) */
+        .patient-box {
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 5px;
+            margin-bottom: 15px;
         }
-        .doctor-sub {
-            font-size: 12px;
-            color: #555;
-            font-weight: 600;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
+        .patient-table { width: 100%; font-size: 10px; }
+        .label { font-weight: bold; margin-right: 5px; }
 
-        .clinic-info {
-            text-align: right;
-            font-size: 9px;
-            color: #666;
-        }
-        .clinic-name {
-            font-size: 12px;
-            font-weight: bold;
-            color: #333;
-            display: block;
-        }
-
-        /* SECCIÓN PACIENTE */
-        .patient-section {
-            margin-bottom: 20px;
-            padding: 10px;
-            background-color: #f9f9f9;
-            border-radius: 5px;
-            border: 1px solid #eee;
-        }
-        .patient-table { width: 100%; }
-
-        .info-label {
-            font-size: 8px;
-            color: #888;
-            text-transform: uppercase;
-            font-weight: bold;
-        }
-        .info-value {
-            font-size: 13px;
-            color: #000;
-            font-weight: bold;
-            display: block;
-        }
-
-        /* TÍTULOS DE SECCIÓN */
-        .section-title {
-            font-size: 18px;
-            font-weight: bold;
-            color: #0056b3;
-            margin-bottom: 10px;
-            border-left: 5px solid #0056b3;
-            padding-left: 10px;
-        }
-
-        /* TABLAS DE ITEMS */
-        .items-table {
+        /* LISTAS DE MEDICAMENTOS */
+        .med-list {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
         }
-        .items-table th {
-            background-color: #f4f4f4;
-            color: #333;
-            text-transform: uppercase;
-            font-size: 10px;
-            padding: 8px;
-            text-align: left;
-            border-bottom: 2px solid #ddd;
-        }
-        .items-table td {
-            padding: 10px 8px;
-            border-bottom: 1px solid #f0f0f0;
+        .med-list td {
+            padding: 5px 0;
             vertical-align: top;
         }
-
-        .item-index { color: #aaa; font-weight: bold; text-align: center; width: 30px; }
-        .med-name { font-size: 14px; font-weight: bold; color: #000; }
-
-        /* Estilo para las indicaciones (Hoja 2) */
-        .med-indic-box {
+        .med-number {
+            width: 20px;
+            font-weight: bold;
+        }
+        .med-name {
             font-size: 12px;
-            color: #444;
-            background: #fffcf5;
-            padding: 8px;
-            border: 1px dashed #ddd;
-            border-radius: 4px;
-            margin-top: 5px;
+            font-weight: bold;
         }
-
-        /* OBSERVACIONES */
-        .notes-box {
-            margin-top: 20px;
-            border: 1px solid #ccc;
-            padding: 10px;
-            border-radius: 4px;
+        .med-indication {
             font-size: 11px;
-            color: #555;
+            margin-top: 2px;
+            font-style: italic;
+            color: #333;
+            padding-left: 0;
         }
 
-        /* PIE DE PÁGINA (FIJO) */
+        /* SEPARADORES ENTRE ITEMS (Opcional, para limpieza) */
+        .item-row {
+            border-bottom: 1px dotted #ccc;
+        }
+
+        /* FOOTER FIJO */
         .footer {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
+            height: 60px;
             text-align: center;
-            height: 100px; /* Altura ajustada */
-            background-color: #fff; /* Fondo blanco para no mezclar con texto si se pasa */
+            font-size: 9px;
+            background: white;
         }
         .signature-line {
-            width: 200px;
+            width: 150px;
             border-top: 1px solid #000;
-            margin: 0 auto 5px auto;
-        }
-        .doc-name-footer { font-weight: bold; font-size: 12px; }
-        .disclaimer {
-            font-size: 8px;
-            color: #999;
-            margin-top: 10px;
+            margin: 0 auto 2px auto;
         }
     </style>
 </head>
@@ -161,122 +97,79 @@
 
     <div class="footer">
         <div class="signature-line"></div>
-        <div class="doc-name-footer">{{ $recipe->paciente->medico }}</div>
-        <div style="font-size: 10px;">Dermatología</div>
-
-        <div style="margin-top: 5px;">
-             <span style="font-family: monospace; color: #d9534f; font-size: 10px;">REF: {{ $recipe->codigo }}</span>
-        </div>
-
+        <div class="bold">{{ $recipe->paciente->medico }}</div>
+        <div>Dermatología</div>
+        <div style="margin-top: 5px;">Ref: {{ $recipe->codigo }}</div>
     </div>
 
     <table class="header-table">
         <tr>
-            <td width="55%" style="vertical-align: bottom;">
-                <div class="doctor-title">{{ $recipe->paciente->medico ?? 'N/A' }}</div>
-                <div class="doctor-sub">Dermatología</div>
+            <td width="60%" valign="bottom">
+                <div class="doc-name uppercase">{{ $recipe->paciente->medico ?? 'N/A' }}</div>
+                <div class="doc-spec uppercase">Dermatología</div>
             </td>
-            <td width="45%" class="clinic-info" style="vertical-align: bottom;">
-                <span class="clinic-name" style="color: #0056b3;">Centro Médico Orinoco</span>
-                Consultorio N°2 (Detrás de la Farmacia)<br>
-                Ciudad Bolívar - Edo. Bolívar<br>
-                <strong>Telf:</strong> 0424-9671119
+            <td width="40%" class="text-right clinic-data" valign="bottom">
+                <span class="bold">Centro Médico Orinoco</span><br>
+                Consultorio N°2<br>
+                Telf: 0424-9671119
             </td>
         </tr>
     </table>
 
-    <div class="patient-section">
+    <div class="patient-box">
         <table class="patient-table">
             <tr>
-                <td width="50%">
-                    <div class="info-label">Paciente</div>
-                    <span class="info-value">{{ $recipe->paciente->nombre_completo }}</span>
-                </td>
-                <td width="20%">
-                    <div class="info-label">Cédula</div>
-                    <span class="info-value">{{ $recipe->paciente->cedula }}</span>
-                </td>
-                <td width="15%">
-                    <div class="info-label">Edad</div>
-                    <span class="info-value">{{ $recipe->paciente->fecha_nacimiento->age }} Años</span>
-                </td>
-                <td width="15%" style="text-align: right;">
-                    <div class="info-label">Fecha</div>
-                    <span class="info-value">{{ $recipe->fecha->format('d/m/Y') }}</span>
-                </td>
+                <td><span class="label">Paciente:</span> {{ $recipe->paciente->nombre_completo }}</td>
+                <td><span class="label">C.I:</span> {{ $recipe->paciente->cedula }}</td>
+                <td class="text-right"><span class="label">Fecha:</span> {{ $recipe->fecha->format('d/m/Y') }}</td>
             </tr>
         </table>
     </div>
 
-    <div class="section-title">Rp. (Medicamentos)</div>
+    <div class="bold" style="font-size: 14px; margin-bottom: 10px;">Rp. (Medicamentos)</div>
 
-    <table class="items-table">
-        <thead>
-            <tr>
-                <th width="10%">#</th>
-                <th width="90%">Medicamento prescrito</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($recipe->items as $index => $item)
-            <tr>
-                <td class="item-index">{{ $index + 1 }}</td>
-                <td>
-                    <div class="med-name">{{ $item->medicamento }}</div>
-
+    <table class="med-list">
+        @foreach($recipe->items as $index => $item)
+        <tr class="item-row">
+            <td class="med-number">{{ $index + 1 }}.</td>
+            <td>
+                <div class="med-name">{{ $item->medicamento }}</div>
                 </td>
-            </tr>
-            @endforeach
-        </tbody>
+        </tr>
+        @endforeach
     </table>
 
     @if($recipe->observaciones)
-    <div class="notes-box">
-        <strong>Nota:</strong> {{ $recipe->observaciones }}
+    <div style="margin-top: 20px; font-size: 10px; border: 1px solid #000; padding: 5px;">
+        <span class="bold">Observación:</span> {{ $recipe->observaciones }}
     </div>
     @endif
 
     <div class="page-break"></div>
 
-    <div style="border-bottom: 1px solid #ccc; margin-bottom: 20px; padding-bottom: 10px;">
+    <div style="border-bottom: 2px solid #000; margin-bottom: 15px; padding-bottom: 5px;">
         <table width="100%">
             <tr>
-                <td>
-                    <span style="font-weight: bold; color: #0056b3;">HOJA DE TRATAMIENTO</span><br>
-                    <span style="font-size: 10px;">Paciente: {{ $recipe->paciente->nombre_completo }}</span>
-                </td>
-                <td align="right">
-                     <span style="font-size: 10px;">Ref: {{ $recipe->codigo }}</span>
-                </td>
+                <td class="bold uppercase" style="font-size: 12px;">Plan de Tratamiento</td>
+                <td class="text-right" style="font-size: 10px;">Paciente: {{ $recipe->paciente->nombre_completo }}</td>
             </tr>
         </table>
     </div>
 
-    <div class="section-title">Indicaciones Detalladas</div>
-
-    <table class="items-table">
-        <thead>
-            <tr>
-                <th width="5%">#</th>
-                <th width="35%">Medicamento</th>
-                <th width="60%">Modo de uso / Indicaciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($recipe->items as $index => $item)
-            <tr>
-                <td class="item-index">{{ $index + 1 }}</td>
-                <td style="vertical-align: top;">
-                    <div class="med-name" style="font-size: 12px;">{{ $item->medicamento }}</div>
-                </td>
-                <td>
-                    <div class="med-indic-box">
-                        {{ $item->indicaciones }}
-                    </div>
-                </td>
-            </tr>
-            @endforeach
-        </tbody>
+    <table class="med-list">
+        @foreach($recipe->items as $index => $item)
+        <tr> <td class="med-number" style="padding-top: 10px;">{{ $index + 1 }}.</td>
+            <td style="padding-top: 10px;">
+                <div class="med-name">{{ $item->medicamento }}</div>
+                <div class="med-indication">
+                    {{ $item->indicaciones }}
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" style="border-bottom: 1px solid #eee;"></td>
+        </tr>
+        @endforeach
     </table>
 
 </body>
