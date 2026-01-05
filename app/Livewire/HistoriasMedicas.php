@@ -5,27 +5,26 @@ namespace App\Livewire;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\HistoriaMedica;
+// No olvides importar el modelo hijo si fuera necesario, aunque usamos la relación.
 
 class HistoriasMedicas extends Component
 {
     use WithPagination;
 
     public $search = '';
-    public $view = 'list'; // 'list', 'form', o 'show'
+    public $view = 'list';
 
-    // Identificador del registro que estamos editando
     public $historia_id = null;
-
-    // Objeto para ver detalles (Show)
     public $historiaSeleccionada = null;
-
-    // NUEVO: Propiedad para manejar el Modal de Eliminación
     public $confirmingDeleteId = null;
 
-    // Propiedades del formulario
+    // Propiedades del paciente
     public $cedula, $nombres, $apellidos, $fecha_nacimiento, $lugar_nacimiento;
     public $direccion, $telefono, $telefono_casa, $email;
     public $profesion, $ocupacion, $referido, $estado_civil, $genero, $seguro, $medico;
+
+    // NUEVO: Array para manejar múltiples patologías
+    public $patologias = [];
 
     protected function rules()
     {
@@ -36,18 +35,39 @@ class HistoriasMedicas extends Component
             'fecha_nacimiento' => 'required|date',
             'lugar_nacimiento' => 'required|string',
             'direccion' => 'required|string',
-            'telefono' => 'required|numeric',
+            'telefono' => 'required|string',
             'ocupacion' => 'required|string',
             'estado_civil' => 'required|string',
             'genero' => 'required|string',
             'seguro' => 'required|string',
             'medico' => 'required|string',
-            'telefono_casa' => 'nullable|numeric',
+            'telefono_casa' => 'nullable|string',
             'email' => 'nullable|email',
             'profesion' => 'nullable|string',
             'referido' => 'nullable|string',
+
+            // NUEVO: Validación para el array de patologías
+            'patologias.*.nombre' => 'required|string', // El nombre es obligatorio si agregas una fila
+            'patologias.*.observaciones' => 'nullable|string',
         ];
     }
+
+    // --- MÉTODOS PARA GESTIONAR PATOLOGÍAS DINÁMICAS ---
+
+    // Agregar una fila vacía al array
+    public function addPatologia()
+    {
+        $this->patologias[] = ['nombre' => '', 'observaciones' => ''];
+    }
+
+    // Quitar una fila específica del array
+    public function removePatologia($index)
+    {
+        unset($this->patologias[$index]);
+        $this->patologias = array_values($this->patologias); // Reordenar índices
+    }
+
+    // ---------------------------------------------------
 
     public function updatedSearch()
     {
@@ -57,12 +77,15 @@ class HistoriasMedicas extends Component
     public function create()
     {
         $this->resetInputFields();
+        // Opcional: Iniciar con una fila vacía de patología si quieres
+        // $this->addPatologia();
         $this->view = 'form';
     }
 
     public function show($id)
     {
-        $this->historiaSeleccionada = HistoriaMedica::findOrFail($id);
+        // Al mostrar, cargamos la relación 'patologias' para poder verlas
+        $this->historiaSeleccionada = HistoriaMedica::with('patologias')->findOrFail($id);
         $this->view = 'show';
     }
 
@@ -70,7 +93,8 @@ class HistoriasMedicas extends Component
     {
         $this->validate();
 
-        HistoriaMedica::updateOrCreate(['id' => $this->historia_id], [
+        // 1. Guardamos o Actualizamos la Historia Médica (Padre)
+        $historia = HistoriaMedica::updateOrCreate(['id' => $this->historia_id], [
             'cedula' => $this->cedula,
             'nombres' => $this->nombres,
             'apellidos' => $this->apellidos,
@@ -88,6 +112,15 @@ class HistoriasMedicas extends Component
             'seguro' => $this->seguro,
             'medico' => $this->medico,
         ]);
+
+        // 2. Guardamos las Patologías (Hijas)
+        // Estrategia: Borramos las anteriores y creamos las nuevas para evitar duplicados o lógica compleja de IDs
+        $historia->patologias()->delete();
+
+        if (!empty($this->patologias)) {
+            // createMany espera un array de arrays asociativos
+            $historia->patologias()->createMany($this->patologias);
+        }
 
         session()->flash('message', $this->historia_id ? 'Historia actualizada correctamente.' : 'Historia creada correctamente.');
         $this->cancel();
@@ -115,35 +148,39 @@ class HistoriasMedicas extends Component
         $this->seguro = $historia->seguro;
         $this->medico = $historia->medico;
 
+        // NUEVO: Cargar las patologías existentes al array para editarlas
+        // Mapeamos solo los campos que necesitamos
+        $this->patologias = $historia->patologias->map(function($patologia) {
+            return [
+                'nombre' => $patologia->nombre,
+                'observaciones' => $patologia->observaciones
+            ];
+        })->toArray();
+
         $this->view = 'form';
     }
 
-    // --- LÓGICA DEL MODAL DE ELIMINACIÓN ---
-
-    // 1. Abre el modal
+    // LÓGICA DEL MODAL DE ELIMINACIÓN
     public function confirmDelete($id)
     {
         $this->confirmingDeleteId = $id;
     }
 
-    // 2. Ejecuta la eliminación real
     public function delete()
     {
         if ($this->confirmingDeleteId) {
+            // Al borrar la historia, las patologías se borran solas si pusiste onDelete('cascade') en la migración
             HistoriaMedica::find($this->confirmingDeleteId)->delete();
             session()->flash('message', 'Historia eliminada correctamente.');
-            $this->confirmingDeleteId = null; // Cierra modal
-            $this->resetPage(); // Opcional: seguridad de paginación
+            $this->confirmingDeleteId = null;
+            $this->resetPage();
         }
     }
 
-    // 3. Cancela y cierra
     public function cancelDelete()
     {
         $this->confirmingDeleteId = null;
     }
-
-    // ----------------------------------------
 
     public function cancel()
     {
@@ -155,6 +192,8 @@ class HistoriasMedicas extends Component
     private function resetInputFields()
     {
         $this->historia_id = null;
+        // Reseteamos también el array de patologías
+        $this->patologias = [];
         $this->reset([
             'cedula', 'nombres', 'apellidos', 'fecha_nacimiento', 'lugar_nacimiento',
             'direccion', 'telefono', 'telefono_casa', 'email', 'profesion',
@@ -162,21 +201,15 @@ class HistoriasMedicas extends Component
         ]);
     }
 
-   public function render()
+    public function render()
     {
-        // 1. Preparamos el término de búsqueda para el ID
-        // Quitamos "HM-" (mayúscula o minúscula) y los ceros a la izquierda.
-        // Ejemplo: Si escribe "HM-000050", esto lo convierte en "50".
         $busquedaId = ltrim(str_ireplace(['HM-', 'hm-'], '', $this->search), '0');
 
         $historias = HistoriaMedica::where(function($query) use ($busquedaId) {
-                // Búsquedas de texto normal (usamos $this->search original)
                 $query->where('nombres', 'like', '%' . $this->search . '%')
                       ->orWhere('apellidos', 'like', '%' . $this->search . '%')
                       ->orWhere('cedula', 'like', '%' . $this->search . '%');
 
-                // 2. Agregamos la búsqueda por ID numérico
-                // Solo si $busquedaId es un número válido, buscamos en la columna 'id'
                 if (is_numeric($busquedaId) && $busquedaId != '') {
                     $query->orWhere('id', 'like', '%' . $busquedaId . '%');
                 }

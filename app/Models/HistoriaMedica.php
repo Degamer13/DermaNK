@@ -5,7 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
-
+// 👇 ESTA LÍNEA ES LA QUE TE FALTA 👇
+use Illuminate\Database\Eloquent\Relations\HasMany;
 class HistoriaMedica extends Model
 {
     use HasFactory;
@@ -65,5 +66,10 @@ class HistoriaMedica extends Model
         return Attribute::make(
             get: fn () => "{$this->nombres} {$this->apellidos}",
         );
+    }
+    // Una historia TIENE MUCHAS patologías
+    public function patologias(): HasMany
+    {
+        return $this->hasMany(Patologia::class, 'historia_medica_id');
     }
 }

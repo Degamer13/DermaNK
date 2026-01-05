@@ -13,7 +13,7 @@ use Spatie\DbDumper\Databases\MySql; // <--- IMPORTANTE: Asegúrate de importar 
 use Illuminate\Support\Facades\File;
 // --- Importación de Controladores ---
 use App\Http\Controllers\RecipeController;
-
+use App\Http\Controllers\ReporteController;
 // --- Importación de Modelos ---
 use App\Models\HistoriaMedica;
 
@@ -69,10 +69,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Récipes e Impresión
     Route::get('/recipes', RecipesManager::class)->name('recipes.index');
     Route::get('/recipe/pdf/{recipe}', [RecipeController::class, 'pdf'])->name('recipe.pdf');
+
 // AQUÍ ESTABA EL ERROR: Ahora usamos MedicamentosManager::class
 // ... dentro del middleware auth ...
 Route::get('/medicamentos', MedicamentosManager::class)->name('medicamentos.index');
-
+// Ruta para imprimir UNA sola historia pasando el ID
+Route::get('/reporte/historia/{id}', [ReporteController::class, 'imprimirHistoriaIndividual'])
+     ->name('reporte.historia.individual');
     // --- SEGURIDAD Y ADMINISTRACIÓN (Protegidos por Roles/Permisos) ---
 
     // Usuarios (Solo quien tenga permiso 'ver usuarios')

@@ -38,13 +38,14 @@ class RoleSeeder extends Seeder
             'crear pacientes',
             'editar pacientes',
             'eliminar pacientes',
+            'imprimir historias', // PDF
 
             // --- GESTIÓN DE RÉCIPES ---
             'ver recipes',
             'crear recipes',
             'editar recipes',
             'eliminar recipes',
-            'descargar recipes', // PDF
+            'imprimir recipes', // PDF
             // --- GESTIÓN DE MEDICAMENTOS ---
             'ver medicamentos',
             'crear medicamentos',
@@ -77,12 +78,13 @@ class RoleSeeder extends Seeder
             'ver pacientes',
             'crear pacientes',
             'editar pacientes',
+            'imprimir historias',
 
             // Récipes (Puede ver, crear, corregir y descargar, pero NO eliminar)
             'ver recipes',
             'crear recipes',
             'editar recipes',
-            'descargar recipes',
+            'imprimir recipes',
         ]);
     }
 }
