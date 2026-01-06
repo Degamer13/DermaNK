@@ -117,7 +117,7 @@
     @elseif($view == 'show' && $historiaSeleccionada)
         <div class="flex items-center justify-between pb-4 mb-6 border-b dark:border-neutral-700">
             <h2 class="text-2xl font-bold text-gray-800 dark:text-neutral-100">
-                Historia Médica <span class="text-blue-600 dark:text-blue-400">{{ $historiaSeleccionada->id }}</span>
+                Historia Médica <span class="text-blue-600 dark:text-blue-400">{{ $historiaSeleccionada->codigo_historia }}</span>
             </h2>
             <button wire:click="cancel" class="px-4 py-2 text-gray-700 bg-gray-200 rounded hover:bg-gray-300 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700">
                 ← Volver al listado
