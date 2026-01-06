@@ -49,7 +49,7 @@
                             <div class="text-xs text-gray-500 dark:text-neutral-500">{{ $recipe->paciente->cedula }}</div>
                         </td>
                         <td class="px-6 py-3 text-center flex justify-center gap-3">
-                            @can('descargar recipes')
+                            @can('imprimir recipes')
 
                             {{-- PDF --}}
                             <a href="{{ route('recipe.pdf', $recipe->id) }}" target="_blank"
