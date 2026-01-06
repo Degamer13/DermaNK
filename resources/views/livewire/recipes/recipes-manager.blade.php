@@ -36,6 +36,7 @@
                     <th class="px-6 py-3 text-left">Código</th>
                     <th class="px-6 py-3 text-left">Fecha</th>
                     <th class="px-6 py-3 text-left">Paciente</th>
+                    <th class="px-6 py-3 text-left">Patologia</th>
                     <th class="px-6 py-3 text-center">Acciones</th>
                 </tr>
             </thead>
@@ -48,6 +49,7 @@
                             <div class="font-bold">{{ $recipe->paciente->nombre_completo }}</div>
                             <div class="text-xs text-gray-500 dark:text-neutral-500">{{ $recipe->paciente->cedula }}</div>
                         </td>
+                        <td class="px-6 py-3">{{ $recipe->observaciones }}</td>
                         <td class="px-6 py-3 text-center flex justify-center gap-3">
                             @can('imprimir recipes')
 

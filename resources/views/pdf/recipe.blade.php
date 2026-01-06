@@ -126,7 +126,7 @@
         </table>
     </div>
 
-    <div class="bold" style="font-size: 14px; margin-bottom: 10px;">Rp. (Medicamentos)</div>
+    <div class="bold" style="font-size: 14px; margin-bottom: 10px;">Medicamentos</div>
 
     <table class="med-list">
         @foreach($recipe->items as $index => $item)
@@ -139,22 +139,33 @@
         @endforeach
     </table>
 
-    @if($recipe->observaciones)
-    <div style="margin-top: 20px; font-size: 10px; border: 1px solid #000; padding: 5px;">
-        <span class="bold">Observación:</span> {{ $recipe->observaciones }}
-    </div>
-    @endif
+
 
     <div class="page-break"></div>
+  <table class="header-table">
+        <tr>
+            <td width="60%" valign="bottom">
+                <div class="doc-name uppercase">{{ $recipe->paciente->medico ?? 'N/A' }}</div>
+                <div class="doc-spec uppercase">Dermatología</div>
+            </td>
+            <td width="40%" class="text-right clinic-data" valign="bottom">
+                <span class="bold">Centro Médico Orinoco</span><br>
+                Consultorio N°2<br>
+                Telf: 0424-9671119
+            </td>
+        </tr>
+    </table>
 
-    <div style="border-bottom: 2px solid #000; margin-bottom: 15px; padding-bottom: 5px;">
-        <table width="100%">
+   <div class="patient-box">
+        <table class="patient-table">
             <tr>
-                <td class="bold uppercase" style="font-size: 12px;">Plan de Tratamiento</td>
-                <td class="text-right" style="font-size: 10px;">Paciente: {{ $recipe->paciente->nombre_completo }}</td>
+                <td><span class="label">Paciente:</span> {{ $recipe->paciente->nombre_completo }}</td>
+                <td><span class="label">C.I:</span> {{ $recipe->paciente->cedula }}</td>
+                <td class="text-right"><span class="label">Fecha:</span> {{ $recipe->fecha->format('d/m/Y') }}</td>
             </tr>
         </table>
     </div>
+     <div class="bold" style="font-size: 14px; margin-bottom: 10px;">Indicaciones</div>
 
     <table class="med-list">
         @foreach($recipe->items as $index => $item)
