@@ -201,15 +201,25 @@ class HistoriasMedicas extends Component
         ]);
     }
 
-    public function render()
+   public function render()
     {
+        // Limpiamos el input para intentar detectar si buscan por ID (HM-001 -> 1)
         $busquedaId = ltrim(str_ireplace(['HM-', 'hm-'], '', $this->search), '0');
 
         $historias = HistoriaMedica::where(function($query) use ($busquedaId) {
+                // Búsqueda básica (Nombres, Apellidos, Cédula)
                 $query->where('nombres', 'like', '%' . $this->search . '%')
                       ->orWhere('apellidos', 'like', '%' . $this->search . '%')
                       ->orWhere('cedula', 'like', '%' . $this->search . '%');
 
+                // --- NUEVO: BUSCAR POR NOMBRE DE PATOLOGÍA ---
+                // Esto busca si la historia tiene AL MENOS UNA patología que coincida con el texto
+                $query->orWhereHas('patologias', function ($q) {
+                    $q->where('nombre', 'like', '%' . $this->search . '%');
+                });
+                // ---------------------------------------------
+
+                // Búsqueda por ID numérico (si aplica)
                 if (is_numeric($busquedaId) && $busquedaId != '') {
                     $query->orWhere('id', 'like', '%' . $busquedaId . '%');
                 }

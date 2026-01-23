@@ -72,4 +72,5 @@ class HistoriaMedica extends Model
     {
         return $this->hasMany(Patologia::class, 'historia_medica_id');
     }
+    
 }

@@ -6,27 +6,23 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\Recipe;
 use App\Models\HistoriaMedica;
+use App\Models\Medicamento; // Importamos el modelo
 use Illuminate\Support\Str;
 
 class RecipesManager extends Component
 {
     use WithPagination;
 
-    // Listado
+    // ... (Tus variables existentes: search, isOpen, recipeId, etc.) ...
     public $search = '';
-
-    // Modal y Edición
     public $isOpen = false;
     public $recipeId = null;
     public $confirmingDeleteId = null;
-
-    // Formulario
-    public $searchPatient = '';     // Buscador dentro del modal
-    public $selectedPatient = null; // Paciente elegido
+    public $searchPatient = '';
+    public $selectedPatient = null;
     public $fecha;
     public $observaciones;
 
-    // Items Dinámicos (Medicamentos)
     public $items = [
         ['medicamento' => '', 'indicaciones' => '']
     ];
@@ -36,14 +32,15 @@ class RecipesManager extends Component
         $this->fecha = date('Y-m-d');
     }
 
-    // --- Abrir Modal para CREAR ---
+    // ... (Tus métodos create, edit, closeModal, resetInputFields iguales) ...
+    // ... (Solo pego create y edit resumidos para mantener contexto) ...
+
     public function create()
     {
         $this->resetInputFields();
         $this->isOpen = true;
     }
 
-    // --- Abrir Modal para EDITAR ---
     public function edit($id)
     {
         $this->resetInputFields();
@@ -56,7 +53,6 @@ class RecipesManager extends Component
         $this->fecha = $recipe->fecha->format('Y-m-d');
         $this->observaciones = $recipe->observaciones;
 
-        // Cargamos los medicamentos existentes al array
         $this->items = $recipe->items->map(function($item){
             return [
                 'medicamento' => $item->medicamento,
@@ -82,7 +78,7 @@ class RecipesManager extends Component
         $this->resetValidation();
     }
 
-    // --- Lógica de Pacientes ---
+    // ... (Métodos de Pacientes y addItem/removeItem iguales) ...
     public function selectPatient($id)
     {
         $this->selectedPatient = HistoriaMedica::find($id);
@@ -94,7 +90,6 @@ class RecipesManager extends Component
         $this->selectedPatient = null;
     }
 
-    // --- Lógica de Medicamentos (Agregar/Quitar Filas) ---
     public function addItem()
     {
         $this->items[] = ['medicamento' => '', 'indicaciones' => ''];
@@ -106,7 +101,7 @@ class RecipesManager extends Component
         $this->items = array_values($this->items);
     }
 
-   // --- GUARDAR ---
+    // --- GUARDAR (AQUÍ ESTÁ LA MAGIA DEL NUEVO REQUERIMIENTO) ---
     public function save()
     {
         $this->validate([
@@ -117,16 +112,14 @@ class RecipesManager extends Component
         ]);
 
         if ($this->recipeId) {
-            // Update (Editar)
             $recipe = Recipe::find($this->recipeId);
             $recipe->update([
                 'historia_medica_id' => $this->selectedPatient->id,
                 'fecha' => $this->fecha,
                 'observaciones' => $this->observaciones,
             ]);
-            $recipe->items()->delete(); // Borramos items viejos
+            $recipe->items()->delete();
         } else {
-            // Create (Crear Nuevo)
             $recipe = Recipe::create([
                 'historia_medica_id' => $this->selectedPatient->id,
                 'codigo' => 'REC-' . strtoupper(Str::random(6)),
@@ -135,22 +128,29 @@ class RecipesManager extends Component
             ]);
         }
 
-        // Guardar Items
+        // Guardar Items y Registrar Medicamentos Nuevos
         foreach ($this->items as $item) {
+
+            // 1. Buscamos o creamos el medicamento en el catálogo general
+            // 'firstOrCreate' busca por 'nombre'. Si no existe, lo crea.
+            Medicamento::firstOrCreate(
+                ['nombre' => $item['medicamento']], // Criterio de búsqueda
+                [
+                    // Valores por defecto si se crea uno nuevo (opcional)
+                    'descripcion' => 'Registrado desde Récipe',
+                    'tipo_medicamento' => 'Generico'
+                ]
+            );
+
+            // 2. Guardamos el item en el récipe (texto plano tal cual estaba)
             $recipe->items()->create($item);
         }
 
-        // 1. Mensaje de éxito (Flash Message)
         session()->flash('message', 'Récipe guardado correctamente.');
-
-        // 2. Cerrar el Modal
         $this->closeModal();
-
-        // 3. ¡LISTO! Ya no hacemos el return redirect.
-        // El componente se recargará solo mostrando la tabla y el mensaje verde.
     }
 
-    // --- ELIMINAR ---
+    // ... (Métodos delete e confirmDelete iguales) ...
     public function confirmDelete($id)
     {
         $this->confirmingDeleteId = $id;
@@ -167,7 +167,6 @@ class RecipesManager extends Component
 
     public function render()
     {
-        // Consulta principal para la tabla
         $recipes = Recipe::with('paciente')
             ->where('codigo', 'like', '%' . $this->search . '%')
             ->orWhereHas('paciente', function ($q) {
@@ -177,7 +176,6 @@ class RecipesManager extends Component
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
-        // Búsqueda de pacientes para el Dropdown
         $patientsFound = [];
         if (strlen($this->searchPatient) > 1) {
             $patientsFound = HistoriaMedica::where('nombres', 'like', "%{$this->searchPatient}%")
@@ -185,6 +183,10 @@ class RecipesManager extends Component
                 ->take(5)->get();
         }
 
-        return view('livewire.recipes.recipes-manager', compact('recipes', 'patientsFound'));
+        // NUEVO: Obtenemos solo los nombres de los medicamentos para el autocompletado
+        // Usamos pluck para que sea un array simple ['Aspirina', 'Ibuprofeno', ...]
+        $medicamentosList = Medicamento::orderBy('nombre')->pluck('nombre');
+
+        return view('livewire.recipes.recipes-manager', compact('recipes', 'patientsFound', 'medicamentosList'));
     }
 }

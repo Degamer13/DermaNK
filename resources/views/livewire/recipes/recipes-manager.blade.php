@@ -10,23 +10,22 @@
     {{-- Encabezado --}}
     <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
 
-    {{-- IZQUIERDA: Buscador --}}
-    {{-- Le ponemos un ancho fijo en escritorio (md:w-96) para que no se estire demasiado, pero full en móvil --}}
-    <div class="w-full md:w-96">
-        <input wire:model.live="search" type="text"
-            class="w-full p-2 border border-gray-300 rounded-lg dark:bg-neutral-950 dark:border-neutral-700 dark:text-neutral-200 focus:ring-blue-500"
-            placeholder="Buscar código o paciente...">
+        {{-- IZQUIERDA: Buscador --}}
+        <div class="w-full md:w-96">
+            <input wire:model.live="search" type="text"
+                class="w-full p-2 border border-gray-300 rounded-lg dark:bg-neutral-950 dark:border-neutral-700 dark:text-neutral-200 focus:ring-blue-500"
+                placeholder="Buscar código o paciente...">
+        </div>
+
+        {{-- DERECHA: Botón --}}
+        @can('crear recipes')
+            <button wire:click="create"
+                class="w-full md:w-auto px-4 py-2 font-bold text-white bg-blue-600 rounded hover:bg-blue-700 whitespace-nowrap">
+                + Nuevo Récipe
+            </button>
+        @endcan
+
     </div>
-
-    {{-- DERECHA: Botón --}}
-    @can('crear recipes')
-        <button wire:click="create"
-            class="w-full md:w-auto px-4 py-2 font-bold text-white bg-blue-600 rounded hover:bg-blue-700 whitespace-nowrap">
-            + Nuevo Récipe
-        </button>
-    @endcan
-
-</div>
 
     {{-- Tabla --}}
     <div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-neutral-800">
@@ -36,7 +35,7 @@
                     <th class="px-6 py-3 text-left">Código</th>
                     <th class="px-6 py-3 text-left">Fecha</th>
                     <th class="px-6 py-3 text-left">Paciente</th>
-                    <th class="px-6 py-3 text-left">Patologia</th>
+
                     <th class="px-6 py-3 text-center">Acciones</th>
                 </tr>
             </thead>
@@ -49,47 +48,46 @@
                             <div class="font-bold">{{ $recipe->paciente->nombre_completo }}</div>
                             <div class="text-xs text-gray-500 dark:text-neutral-500">{{ $recipe->paciente->cedula }}</div>
                         </td>
-                        <td class="px-6 py-3">{{ $recipe->observaciones }}</td>
+
                         <td class="px-6 py-3 text-center flex justify-center gap-3">
                             @can('imprimir recipes')
-
-                            {{-- PDF --}}
-                            <a href="{{ route('recipe.pdf', $recipe->id) }}" target="_blank"
-                             class="mr-2 text-orange-500 hover:text-orange-600 dark:text-orange-400 dark:hover:text-orange-300"
-       title="Imprimir récipe">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5 inline">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0 1 10.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0 .229 2.523a1.125 1.125 0 0 1-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0 0 21 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 0 0-1.913-.247M6.34 18H5.25A2.25 2.25 0 0 1 3 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.041 48.041 0 0 1 1.913-.247m10.5 0a48.536 48.536 0 0 0-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18 10.5h.008v.008H18V10.5Zm-3 0h.008v.008H15V10.5Z" />
-        </svg>
-                            </a>
+                                {{-- PDF --}}
+                                <a href="{{ route('recipe.pdf', $recipe->id) }}" target="_blank"
+                                   class="mr-2 text-orange-500 hover:text-orange-600 dark:text-orange-400 dark:hover:text-orange-300"
+                                   title="Imprimir récipe">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5 inline">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0 1 10.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0 .229 2.523a1.125 1.125 0 0 1-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0 0 21 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 0 0-1.913-.247M6.34 18H5.25A2.25 2.25 0 0 1 3 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.041 48.041 0 0 1 1.913-.247m10.5 0a48.536 48.536 0 0 0-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18 10.5h.008v.008H18V10.5Zm-3 0h.008v.008H15V10.5Z" />
+                                    </svg>
+                                </a>
                             @endcan
 
                             @can('editar recipes')
-                            {{-- Editar --}}
-                            <button wire:click="edit({{ $recipe->id }})"  class="mr-2 text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300" title="Editar">
-                               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5 inline">
-                                      <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+                                {{-- Editar --}}
+                                <button wire:click="edit({{ $recipe->id }})" class="mr-2 text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300" title="Editar">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5 inline">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
                                     </svg>
-                            </button>
+                                </button>
                             @endcan
                             @can('eliminar recipes')
-                            {{-- Eliminar --}}
-                            <button wire:click="confirmDelete({{ $recipe->id }})" class="text-red-500 transition duration-150 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300" title="Eliminar">
-                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5 inline">
-                                      <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                                {{-- Eliminar --}}
+                                <button wire:click="confirmDelete({{ $recipe->id }})" class="text-red-500 transition duration-150 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300" title="Eliminar">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5 inline">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
                                     </svg>
-                            </button>
+                                </button>
                             @endcan
                         </td>
                     </tr>
                 @empty
-                    <tr><td colspan="4" class="py-4 text-center dark:text-neutral-500">No hay récipes.</td></tr>
+                    <tr><td colspan="5" class="py-4 text-center dark:text-neutral-500">No hay récipes.</td></tr>
                 @endforelse
             </tbody>
         </table>
         <div class="p-2">{{ $recipes->links() }}</div>
     </div>
 
-    {{-- MODAL --}}
+    {{-- MODAL PRINCIPAL (Crear/Editar) --}}
     @if($isOpen)
     <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
         <div class="relative w-full max-w-4xl bg-white rounded-xl shadow-2xl dark:bg-neutral-900 dark:border dark:border-neutral-800 max-h-[90vh] overflow-y-auto">
@@ -149,27 +147,97 @@
                     </div>
                 </div>
 
-                {{-- 3. MEDICAMENTOS DINÁMICOS --}}
+                {{-- 3. MEDICAMENTOS DINÁMICOS (VERTICAL + ALINEACIÓN CORRECTA) --}}
                 <div>
-                    <div class="flex justify-between items-center mb-2">
-                        <label class="font-bold text-gray-700 dark:text-neutral-300">Medicamentos</label>
-                        <button wire:click="addItem" class="text-sm text-blue-600 font-bold hover:underline">+ Agregar Otro</button>
+                    <div class="flex justify-between items-center mb-4">
+                        <label class="font-bold text-gray-700 dark:text-neutral-300">Medicamentos y Tratamiento</label>
+                        <button wire:click="addItem" class="text-sm text-blue-600 font-bold hover:underline bg-blue-50 px-3 py-1 rounded dark:bg-blue-900/30">
+                            + Agregar Medicamento
+                        </button>
                     </div>
 
-                    <div class="space-y-3">
+                    <div class="space-y-4">
                         @foreach($items as $index => $item)
-                            <div class="flex gap-2 items-start">
-                                <div class="w-1/3">
-                                    <input wire:model="items.{{ $index }}.medicamento" type="text" placeholder="Medicamento" class="w-full p-2 border rounded dark:bg-neutral-950 dark:border-neutral-700 dark:text-white text-sm">
-                                    @error('items.'.$index.'.medicamento') <span class="text-red-500 text-[10px] block">{{ $message }}</span> @enderror
+                            {{-- Tarjeta del Item --}}
+                            <div class="p-4 border border-gray-200 rounded-lg bg-gray-50/50 dark:bg-neutral-800/50 dark:border-neutral-700">
+
+                                <div class="flex flex-col gap-4">
+
+                                    {{-- CAMPO 1: MEDICAMENTO --}}
+                                    <div class="w-full relative"
+                                         x-data="{
+                                            open: false,
+                                            search: @entangle('items.'.$index.'.medicamento'),
+                                            list: {{ json_encode($medicamentosList, JSON_HEX_QUOT) }},
+                                            get filteredList() {
+                                                if (this.search === '' || this.search === null) return [];
+                                                return this.list.filter(i =>
+                                                    i.toLowerCase().includes(this.search.toLowerCase())
+                                                );
+                                            },
+                                            select(value) {
+                                                this.search = value;
+                                                this.open = false;
+                                            }
+                                         }"
+                                         @click.outside="open = false"
+                                    >
+                                        {{-- HEADER DEL CAMPO: Etiqueta + Botón Eliminar --}}
+                                        <div class="flex justify-between items-center mb-1">
+                                            <label class="block text-xs font-bold text-gray-500 uppercase dark:text-neutral-400">Medicamento</label>
+
+                                            {{-- BOTÓN ELIMINAR (Alineado con la etiqueta) --}}
+                                            @if(count($items) > 1)
+                                                <button wire:click="removeItem({{ $index }})"
+                                                        class="text-red-400 hover:text-red-600 text-xs font-bold hover:underline flex items-center gap-1 transition"
+                                                        title="Eliminar este medicamento">
+                                                    <span>Eliminar</span>
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                                </button>
+                                            @endif
+                                        </div>
+
+                                        <input
+                                            type="text"
+                                            x-model="search"
+                                            @focus="open = true"
+                                            @input="open = true"
+                                            placeholder="Buscar o escribir nombre del medicamento..."
+                                            class="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 dark:bg-neutral-950 dark:border-neutral-700 dark:text-white text-sm font-bold"
+                                            autocomplete="off"
+                                        >
+
+                                        {{-- Dropdown --}}
+                                        <ul x-show="open && filteredList.length > 0"
+                                            x-transition
+                                            class="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-40 overflow-y-auto dark:bg-neutral-800 dark:border-neutral-700"
+                                            style="display: none;">
+                                            <template x-for="medicamento in filteredList" :key="medicamento">
+                                                <li @click="select(medicamento)"
+                                                    class="px-4 py-2 text-sm cursor-pointer hover:bg-blue-100 dark:hover:bg-neutral-700 dark:text-neutral-200"
+                                                    x-text="medicamento">
+                                                </li>
+                                            </template>
+                                        </ul>
+
+                                        @error('items.'.$index.'.medicamento') <span class="text-red-500 text-[10px] block mt-1">{{ $message }}</span> @enderror
+                                    </div>
+
+                                    {{-- CAMPO 2: INDICACIONES --}}
+                                    <div class="w-full">
+                                        <label class="block mb-1 text-xs font-bold text-gray-500 uppercase dark:text-neutral-400">Indicaciones / Dosis</label>
+
+                                        <textarea
+                                            wire:model="items.{{ $index }}.indicaciones"
+                                            rows="2"
+                                            placeholder="Ej: Tomar 1 tableta cada 8 horas por 5 días..."
+                                            class="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 dark:bg-neutral-950 dark:border-neutral-700 dark:text-white text-sm"
+                                        ></textarea>
+
+                                        @error('items.'.$index.'.indicaciones') <span class="text-red-500 text-[10px] block mt-1">{{ $message }}</span> @enderror
+                                    </div>
+
                                 </div>
-                                <div class="w-2/3">
-                                    <input wire:model="items.{{ $index }}.indicaciones" type="text" placeholder="Indicaciones / Dosis" class="w-full p-2 border rounded dark:bg-neutral-950 dark:border-neutral-700 dark:text-white text-sm">
-                                    @error('items.'.$index.'.indicaciones') <span class="text-red-500 text-[10px] block">{{ $message }}</span> @enderror
-                                </div>
-                                @if(count($items) > 1)
-                                    <button wire:click="removeItem({{ $index }})" class="text-red-500 hover:text-red-700 pt-2"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
-                                @endif
                             </div>
                         @endforeach
                     </div>
@@ -186,27 +254,27 @@
     @endif
 
     {{-- MODAL DE CONFIRMACIÓN --}}
-        @if($confirmingDeleteId)
-            <div class="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-x-hidden overflow-y-auto bg-neutral-900/80 backdrop-blur-sm md:inset-0 h-modal md:h-full">
-                <div class="relative w-full max-w-md h-full md:h-auto">
-                    {{-- Modal Content: Usamos neutral-800 para diferenciarlo del fondo 900 --}}
-                    <div class="relative bg-white rounded-lg shadow-xl dark:bg-neutral-800 dark:border dark:border-neutral-700">
-                        <button wire:click="cancelDelete" type="button" class="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-neutral-700 dark:hover:text-white">
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+    @if($confirmingDeleteId)
+        <div class="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-x-hidden overflow-y-auto bg-neutral-900/80 backdrop-blur-sm md:inset-0 h-modal md:h-full">
+            <div class="relative w-full max-w-md h-full md:h-auto">
+                {{-- Modal Content --}}
+                <div class="relative bg-white rounded-lg shadow-xl dark:bg-neutral-800 dark:border dark:border-neutral-700">
+                    <button wire:click="cancelDelete" type="button" class="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-neutral-700 dark:hover:text-white">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                    </button>
+                    <div class="p-6 text-center">
+                        <svg class="mx-auto mb-4 text-gray-400 w-14 h-14 dark:text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-neutral-300">¿Estás seguro de que deseas eliminar este recipe?</h3>
+                        <p class="mb-5 text-sm text-gray-400 dark:text-neutral-400">Esta acción no se puede deshacer.</p>
+                        <button wire:click="delete" type="button" class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center mr-2">
+                            Sí, estoy seguro
                         </button>
-                        <div class="p-6 text-center">
-                            <svg class="mx-auto mb-4 text-gray-400 w-14 h-14 dark:text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-neutral-300">¿Estás seguro de que deseas eliminar este recipe?</h3>
-                            <p class="mb-5 text-sm text-gray-400 dark:text-neutral-400">Esta acción no se puede deshacer.</p>
-                            <button wire:click="delete" type="button" class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center mr-2">
-                                Sí, estoy seguro
-                            </button>
-                            <button wire:click="$set('confirmingDeleteId', null)" type="button" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-neutral-700 dark:text-neutral-300 dark:border-neutral-600 dark:hover:text-white dark:hover:bg-neutral-600">
-                                No, cancelar
-                            </button>
-                        </div>
+                        <button wire:click="$set('confirmingDeleteId', null)" type="button" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-neutral-700 dark:text-neutral-300 dark:border-neutral-600 dark:hover:text-white dark:hover:bg-neutral-600">
+                            No, cancelar
+                        </button>
                     </div>
                 </div>
             </div>
-        @endif
+        </div>
+    @endif
 </div>

@@ -11,7 +11,7 @@
         <div class="flex flex-col justify-between gap-4 mb-4 md:flex-row">
             <input wire:model.live="search" type="text"
                 class="w-full p-2 border border-gray-300 rounded-lg md:w-1/3 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-neutral-950 dark:border-neutral-700 dark:text-neutral-200 dark:placeholder-neutral-500"
-                placeholder="Buscar por nombre, apellido o cédula...">
+                placeholder="Buscar por nombre, apellido o cédula..." >
 
             @can('crear pacientes')
             <button wire:click="create"
