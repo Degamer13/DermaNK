@@ -15,9 +15,10 @@
     </div>
 
     @if (session()->has('message'))
-        <div class="flex items-center p-4 mb-6 text-sm text-green-800 border border-green-300 rounded-lg bg-green-50 dark:bg-zinc-800 dark:text-green-400 dark:border-green-800 animate-fade-in-down">
-            <span class="font-medium mr-2">¡Éxito!</span> {{ session('message') }}
+         <div class="p-4 mb-4 text-green-700 bg-green-100 rounded-lg dark:bg-green-900/30 dark:text-green-400">
+            {{ session('message') }}
         </div>
+
     @endif
 
     <div class="relative mb-6 max-w-lg">
